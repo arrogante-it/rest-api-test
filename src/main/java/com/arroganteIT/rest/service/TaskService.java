@@ -1,10 +1,10 @@
 package com.arroganteIT.rest.service;
 
 import com.arroganteIT.rest.exception.ValidationException;
-import com.arroganteIT.rest.persistance.EmployeesRepository;
-import com.arroganteIT.rest.persistance.TasksRepository;
-import com.arroganteIT.rest.persistance.entity.Employees;
-import com.arroganteIT.rest.persistance.entity.Tasks;
+import com.arroganteIT.rest.persistance.EmployeeRepository;
+import com.arroganteIT.rest.persistance.TaskRepository;
+import com.arroganteIT.rest.persistance.entity.Employee;
+import com.arroganteIT.rest.persistance.entity.Task;
 import com.arroganteIT.rest.validation.ValidationService;
 import com.arroganteIT.rest.validation.Violation;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,19 +20,19 @@ import static com.arroganteIT.rest.utils.FieldUtils.getValueFromJsonNode;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class TasksService {
+public class TaskService {
 
-    private final TasksRepository taskRepository;
-    private final EmployeesRepository employeeRepository;
-    private final ValidationService<Tasks> validationService;
+    private final TaskRepository taskRepository;
+    private final EmployeeRepository employeeRepository;
+    private final ValidationService<Task> validationService;
 
-    public List<Tasks> findUnassignedTasks() {
-        return taskRepository.findAllUnassignedTasks();
+    public List<Task> findAllByEmployeesIsNull() {
+        return taskRepository.findAllByEmployeeIsNull();
     }
 
-    public String createOrUpdateTask(Tasks task) throws ValidationException {
+    public String createOrUpdateTask(Task task) throws ValidationException {
         if (validationService.isValid(task)) {
-            Tasks existingTask = taskRepository.findByTasksKey(task.getTaskKey());
+            Task existingTask = taskRepository.findByTaskKey(task.getTaskKey());
             if (existingTask == null) {
                 task.setCreatedDate(LocalDate.now());
                 taskRepository.save(task);
@@ -48,19 +48,19 @@ public class TasksService {
         String uniqueNumber = getValueFromJsonNode(jsonNode, "uniqueNumber");
 
         if (taskKey != null && uniqueNumber != null) {
-            Employees byUniqueNumber = employeeRepository.findByUniqueNumber(uniqueNumber);
-            Tasks byTaskKey = taskRepository.findByTasksKey(taskKey);
+            Employee byUniqueNumber = employeeRepository.findByUniqueNumber(uniqueNumber);
+            Task byTaskKey = taskRepository.findByTaskKey(taskKey);
             if (byUniqueNumber != null && byTaskKey != null) {
-                if (byTaskKey.getEmployees() != null) {
-                    if (byTaskKey.getEmployees().getUniqueNumber().equals(uniqueNumber)) {
-                        byTaskKey.setEmployees(null);
+                if (byTaskKey.getEmployee() != null) {
+                    if (byTaskKey.getEmployee().getUniqueNumber().equals(uniqueNumber)) {
+                        byTaskKey.setEmployee(null);
                     }else {
                         throw new ValidationException(List.of(
                                 new Violation("Error",
                                 "task is already assigned to user")));
                     }
                 } else {
-                    byTaskKey.setEmployees(byUniqueNumber);
+                    byTaskKey.setEmployee(byUniqueNumber);
                 }
                 taskRepository.save(byTaskKey);
             } else {
@@ -81,13 +81,13 @@ public class TasksService {
 
     public void deleteByTaskKey(JsonNode jsonNode) {
         String taskKey = getValueFromJsonNode(jsonNode, "taskKey");
-        taskRepository.deleteTasksByTasksKey(taskKey);
+        taskRepository.deleteTaskByTaskKey(taskKey);
     }
 
-    private Tasks updateFields(Tasks existing, Tasks upcoming) {
+    private Task updateFields(Task existing, Task upcoming) {
         return existing
                 .setTaskName(upcoming.getTaskName())
-                .setDescription(upcoming.getDescription())
+                .setDescription_task(upcoming.getDescription_task())
                 .setDueDate(upcoming.getDueDate());
     }
 }

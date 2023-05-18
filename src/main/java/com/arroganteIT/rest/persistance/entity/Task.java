@@ -1,5 +1,7 @@
 package com.arroganteIT.rest.persistance.entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -15,7 +17,9 @@ import java.time.LocalDate;
 @Data
 @Accessors(chain = true)
 @Table(indexes = @Index(name = "task_key_idx", columnList = "taskKey"))
-public class Tasks {
+@Getter
+@Setter
+public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,11 +39,12 @@ public class Tasks {
     private String taskName;
 
     @NotBlank
-    private String description;
+    private String description_task;
 
     @JsonIgnore
+    @JoinColumn(name = "employee_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    Employees employees;
+    Employee employee;
 
     @PostPersist
     public void generateTaskKey() {

@@ -1,7 +1,6 @@
 package com.arroganteIT.rest.validation;
 
 import com.arroganteIT.rest.exception.ValidationException;
-import com.arroganteIT.rest.persistance.entity.Employees;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,8 @@
 package com.arroganteIT.rest.controller;
 
 import com.arroganteIT.rest.exception.ValidationException;
-import com.arroganteIT.rest.persistance.entity.Tasks;
-import com.arroganteIT.rest.service.TasksService;
+import com.arroganteIT.rest.persistance.entity.Task;
+import com.arroganteIT.rest.service.TaskService;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,17 +14,17 @@ import java.util.List;
 @RestController
 @RequestMapping("${application.endpoint.task}")
 @RequiredArgsConstructor
-public class TasksController {
+public class TaskController {
 
-    private final TasksService taskService;
+    private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<List<Tasks>> getUnassignedTasks() {
-        return ResponseEntity.ok().body(taskService.findUnassignedTasks());
+    public ResponseEntity<List<Task>> getUnassignedTasks() {
+        return ResponseEntity.ok().body(taskService.findAllByEmployeesIsNull());
     }
 
     @PostMapping
-    public ResponseEntity<?> createOrUpdateTask(@RequestBody Tasks task) {
+    public ResponseEntity<?> createOrUpdateTask(@RequestBody Task task) {
         try {
             String orUpdateTask = taskService.createOrUpdateTask(task);
             return ResponseEntity.status(HttpStatus.CREATED).body(orUpdateTask);
@@ -40,10 +40,12 @@ public class TasksController {
         }catch(ValidationException e) {
             return ResponseEntity.badRequest().body(e.getViolations());
         }
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @DeleteMapping
     public ResponseEntity<?> deleteByUuid(@RequestBody JsonNode jsonNode) {
-        taskService.deleteByUuid(jsonNode);
+        taskService.deleteByTaskKey(jsonNode);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

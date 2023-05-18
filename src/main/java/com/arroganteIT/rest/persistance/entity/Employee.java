@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(indexes = @Index(name = "unique_number_idx", columnList = "uniqueNumber"))
-public class Employees {
+public class Employee {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -35,8 +35,7 @@ public class Employees {
     private LocalDate hired;
 
     @OneToMany(mappedBy = "employee")
-    //@JoinColumn(name = "employee_id")
-    List<Tasks> tasks = new ArrayList<>();
+    List<Task> tasks = new ArrayList<>();
 }
 
 
