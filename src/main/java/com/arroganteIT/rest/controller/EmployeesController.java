@@ -2,7 +2,7 @@ package com.arroganteIT.rest.controller;
 
 
 import com.arroganteIT.rest.persistance.entity.Employees;
-import com.arroganteIT.rest.service.EmployeeService;
+import com.arroganteIT.rest.service.EmployeesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +16,9 @@ import java.util.List;
 @RestController
 @RequestMapping("${application.endpoint.employee}")
 @RequiredArgsConstructor
-public class EmployeeController {
+public class EmployeesController {
 
-    private final EmployeeService employeeService;
+    private final EmployeesService employeeService;
 
     @GetMapping()
     public ResponseEntity<List<Employees>> getEmployees() {

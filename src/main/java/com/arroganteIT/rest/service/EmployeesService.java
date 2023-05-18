@@ -2,7 +2,7 @@ package com.arroganteIT.rest.service;
 
 import com.arroganteIT.rest.exception.ValidationException;
 import com.arroganteIT.rest.persistance.entity.Employees;
-import com.arroganteIT.rest.persistance.EmployeeRepository;
+import com.arroganteIT.rest.persistance.EmployeesRepository;
 import com.arroganteIT.rest.validation.ValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,11 +12,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class EmployeeService {
+public class EmployeesService {
 
-    private final ValidationService validationService;
+    private final ValidationService<Employees> validationService;
 
-    private final EmployeeRepository employeeRepository;
+    private final EmployeesRepository employeeRepository;
 
     public List<Employees> getAllEmployees() {
         return employeeRepository.findAll();
@@ -24,7 +24,7 @@ public class EmployeeService {
 
     @Transactional
     public void save(Employees employee) throws ValidationException {
-        if (validationService.isValidEmployee(employee)) {
+        if (validationService.isValid(employee)) {
             Employees existingEmployee = employeeRepository.findByUniqueNumber(employee.getUniqueNumber());
             if (existingEmployee == null) {
                 employeeRepository.save(employee);
@@ -37,9 +37,9 @@ public class EmployeeService {
 
     private Employees updateFields(Employees existingEmployee, Employees updatedEmployee) {
         return existingEmployee.setDepartment(updatedEmployee.getDepartment())
-                .setSalary(updatedEmployee.getSalary())
+                .setSalary(updatedEmployee.getSalary());
                 //TODO implement tasks merging instead of replacement
-                .setTasks(updatedEmployee.getTasks());
+//                .setTasks(updatedEmployee.getTasks());
     }
 }
 

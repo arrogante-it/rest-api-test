@@ -16,13 +16,13 @@ import javax.validation.ConstraintViolation;
 
 @Service
 @RequiredArgsConstructor
-public class ValidationService {
+public class ValidationService<T> {
 
     private final Validator validator;
 
-    public boolean isValidEmployee(Employees employee) throws ValidationException {
-        Set<ConstraintViolation<Employees>> constraintViolation =
-                validator.validate(employee);
+    public boolean isValid(T t) throws ValidationException {
+        Set<ConstraintViolation<T>> constraintViolation =
+                validator.validate(t);
 
         if (CollectionUtils.isNotEmpty(constraintViolation)) {
             throw new ValidationException(buildViolationsList(constraintViolation));

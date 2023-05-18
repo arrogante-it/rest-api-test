@@ -17,6 +17,7 @@ import java.util.List;
 @Accessors(chain=true)
 @Getter
 @Setter
+@Table(indexes = @Index(name = "unique_number_idx", columnList = "uniqueNumber"))
 public class Employees {
 
     @Id
@@ -33,7 +34,48 @@ public class Employees {
     private Double salary;
     private LocalDate hired;
 
-    @OneToMany
-    @JoinColumn(name = "employee_id")
-    List<Task> tasks = new ArrayList<>();
+    @OneToMany(mappedBy = "employee")
+    //@JoinColumn(name = "employee_id")
+    List<Tasks> tasks = new ArrayList<>();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
